@@ -63,7 +63,8 @@ class MSProgressView: UIView
     {
         super.init(frame: frame)
         
-        layer.backgroundColor = UIColor.greenColor().CGColor
+        backgroundColor = .clearColor()
+        layer.backgroundColor = UIColor.clearColor().CGColor
         
         progressLayer = CAShapeLayer()
         progressLayer.bounds = CGRectMake(0, 0, frame.size.width, frame.size.height)
@@ -84,7 +85,6 @@ class MSProgressView: UIView
         
         progressLayer.bounds = CGRectMake(0, 0, frame.size.width, frame.size.height)
         progressLayer.anchorPoint = CGPointMake(0.0, 0.0)
-        println(progressLayer.anchorPoint)
     }
     
     func startAnimating()
