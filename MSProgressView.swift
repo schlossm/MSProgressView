@@ -51,6 +51,13 @@ class MSProgressView: UIView
     private var progressLayer : CAShapeLayer!
     private var progressBar: UIBezierPath!
     private var progress : CGFloat = 0.0
+    var currentProgress : CGFloat
+        {
+        get
+        {
+            return progress
+        }
+    }
     
     override func drawRect(rect: CGRect)
     {
@@ -121,10 +128,181 @@ class MSProgressView: UIView
         animation.fromValue = progress
         animation.toValue = newProgress
         animation.duration = 0.3
-        animation.fillMode = kCAFillModeForwards
+        animation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionDefault)
         progressLayer.addAnimation(animation, forKey: "strokeEndChange")
         progress = newProgress
         progressLayer.strokeEnd = newProgress
+    }
+    
+    func showComplete()
+    {
+        if layer.animationForKey("rotationAnimation") != nil
+        {
+            layer.removeAnimationForKey("rotationAnimation")
+            UIView.animateWithDuration(0.2, delay: 0.0, options: .AllowAnimatedContent | .AllowUserInteraction, animations: { () -> Void in
+                self.layer.transform = CATransform3DMakeRotation(CGFloat(M_PI * 3.0/2.0), 0.0, 0.0, 1.0)
+                }, completion: nil)
+        }
+        
+        let greenView = UIView()
+        greenView.setTranslatesAutoresizingMaskIntoConstraints(NO)
+        greenView.backgroundColor = Definitions.lighterColorForColor(.greenColor())
+        addSubview(greenView)
+        addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("|[greenView]|", options: NSLayoutFormatOptions(0), metrics: ["barWidth":barWidth], views: ["greenView":greenView]))
+        addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:|[greenView]|", options: NSLayoutFormatOptions(0), metrics: ["barWidth":barWidth], views: ["greenView":greenView]))
+        greenView.layer.cornerRadius = frame.size.width/2.0
+        
+        let bezierPath = UIBezierPath()
+        bezierPath.lineCapStyle = kCGLineCapRound
+        bezierPath.moveToPoint(CGPointMake(0.27083 * CGRectGetWidth(frame), 0.54167 * CGRectGetHeight(frame)))
+        bezierPath.addLineToPoint(CGPointMake(0.41667 * CGRectGetWidth(frame), 0.68750 * CGRectGetHeight(frame)))
+        bezierPath.addLineToPoint(CGPointMake(0.75000 * CGRectGetWidth(frame), 0.35417 * CGRectGetHeight(frame)))
+        
+        let greenViewShapeLayer = CAShapeLayer()
+        greenViewShapeLayer.bounds = CGRectMake(0, 0, frame.size.width, frame.size.height)
+        greenViewShapeLayer.path = bezierPath.CGPath
+        greenViewShapeLayer.strokeColor = UIColor.whiteColor().CGColor
+        greenViewShapeLayer.fillColor = UIColor.clearColor().CGColor
+        greenViewShapeLayer.lineWidth = 3.0
+        greenView.layer.addSublayer(greenViewShapeLayer)
+        greenViewShapeLayer.anchorPoint = CGPointMake(0, 0)
+        
+        layoutIfNeeded()
+        greenView.transform = CGAffineTransformMakeRotation(CGFloat(M_PI_2))
+        greenView.transform = CGAffineTransformMakeScale(0.0, 0.0)
+        greenViewShapeLayer.strokeStart = 0.5
+        greenViewShapeLayer.strokeEnd = 0.5
+        
+        UIView.animateWithDuration(1.0, delay: 0.0, usingSpringWithDamping: 0.6, initialSpringVelocity: 1.0, options: .AllowAnimatedContent | .AllowUserInteraction, animations: { () -> Void in
+            greenViewShapeLayer.strokeStart = 0.5
+            greenViewShapeLayer.strokeEnd = 0.5
+            self.progressLayer.opacity = 0.0
+            greenView.transform = CGAffineTransformMakeRotation(CGFloat(M_PI_2))
+        }) { (finished) -> Void in
+            
+            greenViewShapeLayer.strokeStart = 0.5
+            greenViewShapeLayer.strokeEnd = 0.5
+            
+            let strokeStartAnimation = CABasicAnimation(keyPath: "strokeStart")
+            strokeStartAnimation.fromValue = 0.5
+            strokeStartAnimation.toValue = 0.0
+            strokeStartAnimation.duration = 0.3
+            strokeStartAnimation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionDefault)
+            greenViewShapeLayer.addAnimation(strokeStartAnimation, forKey: "greenLayerstrokeStartChange")
+            greenViewShapeLayer.strokeStart = 0.0
+            let strokeEndAnimation = CABasicAnimation(keyPath: "strokeEnd")
+            strokeEndAnimation.fromValue = 0.5
+            strokeEndAnimation.toValue = 1.0
+            strokeEndAnimation.duration = 0.3
+            strokeEndAnimation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionDefault)
+            greenViewShapeLayer.addAnimation(strokeEndAnimation, forKey: "greenLayerstrokeEndChange")
+            greenViewShapeLayer.strokeEnd = 1.0
+            
+        }
+    }
+    
+    func showIncomplete()
+    {
+        if layer.animationForKey("rotationAnimation") != nil
+        {
+            layer.removeAnimationForKey("rotationAnimation")
+            UIView.animateWithDuration(0.2, delay: 0.0, options: .AllowAnimatedContent | .AllowUserInteraction, animations: { () -> Void in
+                self.layer.transform = CATransform3DMakeRotation(CGFloat(M_PI * 3.0/2.0), 0.0, 0.0, 1.0)
+                }, completion: nil)
+        }
+        
+        let redView = UIView()
+        redView.setTranslatesAutoresizingMaskIntoConstraints(NO)
+        redView.backgroundColor = Definitions.lighterColorForColor(.redColor())
+        addSubview(redView)
+        addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("|[greenView]|", options: NSLayoutFormatOptions(0), metrics: ["barWidth":barWidth], views: ["greenView":redView]))
+        addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:|[greenView]|", options: NSLayoutFormatOptions(0), metrics: ["barWidth":barWidth], views: ["greenView":redView]))
+        redView.layer.cornerRadius = frame.size.width/2.0
+        
+        let firstBezierPath = UIBezierPath()
+        firstBezierPath.lineCapStyle = kCGLineCapRound
+        firstBezierPath.moveToPoint(CGPointMake(0.27083 * CGRectGetWidth(frame), 0.27083 * CGRectGetHeight(frame)))
+        firstBezierPath.addLineToPoint(CGPointMake(0.72917 * CGRectGetWidth(frame), 0.72917 * CGRectGetHeight(frame)))
+        
+        let firstRedViewShapeLayer = CAShapeLayer()
+        firstRedViewShapeLayer.bounds = CGRectMake(0, 0, frame.size.width, frame.size.height)
+        firstRedViewShapeLayer.path = firstBezierPath.CGPath
+        firstRedViewShapeLayer.strokeColor = UIColor.whiteColor().CGColor
+        firstRedViewShapeLayer.fillColor = UIColor.clearColor().CGColor
+        firstRedViewShapeLayer.lineWidth = 3.0
+        redView.layer.addSublayer(firstRedViewShapeLayer)
+        firstRedViewShapeLayer.anchorPoint = CGPointMake(0, 0)
+        
+        let secondBezierPath = UIBezierPath()
+        secondBezierPath.lineCapStyle = kCGLineCapRound
+        secondBezierPath.moveToPoint(CGPointMake(0.27083 * CGRectGetWidth(frame), 0.72917 * CGRectGetHeight(frame)))
+        secondBezierPath.addLineToPoint(CGPointMake(0.72917 * CGRectGetWidth(frame), 0.27083 * CGRectGetHeight(frame)))
+        
+        let secondRedViewShapeLayer = CAShapeLayer()
+        secondRedViewShapeLayer.bounds = CGRectMake(0, 0, frame.size.width, frame.size.height)
+        secondRedViewShapeLayer.path = secondBezierPath.CGPath
+        secondRedViewShapeLayer.strokeColor = UIColor.whiteColor().CGColor
+        secondRedViewShapeLayer.fillColor = UIColor.clearColor().CGColor
+        secondRedViewShapeLayer.lineWidth = 3.0
+        redView.layer.addSublayer(secondRedViewShapeLayer)
+        secondRedViewShapeLayer.anchorPoint = CGPointMake(0, 0)
+        
+        layoutIfNeeded()
+        redView.transform = CGAffineTransformMakeRotation(CGFloat(M_PI_2))
+        redView.transform = CGAffineTransformMakeScale(0.0, 0.0)
+        firstRedViewShapeLayer.strokeStart = 0.5
+        firstRedViewShapeLayer.strokeEnd = 0.5
+        secondRedViewShapeLayer.strokeStart = 0.5
+        secondRedViewShapeLayer.strokeEnd = 0.5
+        
+        UIView.animateWithDuration(1.0, delay: 0.0, usingSpringWithDamping: 0.6, initialSpringVelocity: 1.0, options: .AllowAnimatedContent | .AllowUserInteraction, animations: { () -> Void in
+            
+            firstRedViewShapeLayer.strokeStart = 0.5
+            firstRedViewShapeLayer.strokeEnd = 0.5
+            secondRedViewShapeLayer.strokeStart = 0.5
+            secondRedViewShapeLayer.strokeEnd = 0.5
+            
+            self.progressLayer.opacity = 0.0
+            redView.transform = CGAffineTransformMakeRotation(CGFloat(M_PI_2))
+            
+            }) { (finished) -> Void in
+                
+                firstRedViewShapeLayer.strokeStart = 0.5
+                firstRedViewShapeLayer.strokeEnd = 0.5
+                secondRedViewShapeLayer.strokeStart = 0.5
+                secondRedViewShapeLayer.strokeEnd = 0.5
+                
+                let firstStrokeStartAnimation = CABasicAnimation(keyPath: "strokeStart")
+                firstStrokeStartAnimation.fromValue = 0.5
+                firstStrokeStartAnimation.toValue = 0.0
+                firstStrokeStartAnimation.duration = 0.3
+                firstStrokeStartAnimation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionDefault)
+                firstRedViewShapeLayer.addAnimation(firstStrokeStartAnimation, forKey: "redLayerstrokeStartChange")
+                firstRedViewShapeLayer.strokeStart = 0.0
+                let firstStrokeEndAnimation = CABasicAnimation(keyPath: "strokeEnd")
+                firstStrokeEndAnimation.fromValue = 0.5
+                firstStrokeEndAnimation.toValue = 1.0
+                firstStrokeEndAnimation.duration = 0.3
+                firstStrokeEndAnimation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionDefault)
+                firstRedViewShapeLayer.addAnimation(firstStrokeEndAnimation, forKey: "redLayerstrokeEndChange")
+                firstRedViewShapeLayer.strokeEnd = 1.0
+                
+                let secondStrokeStartAnimation = CABasicAnimation(keyPath: "strokeStart")
+                secondStrokeStartAnimation.fromValue = 0.5
+                secondStrokeStartAnimation.toValue = 0.0
+                secondStrokeStartAnimation.duration = 0.3
+                secondStrokeStartAnimation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionDefault)
+                secondRedViewShapeLayer.addAnimation(secondStrokeStartAnimation, forKey: "redLayerstrokeStartChange")
+                secondRedViewShapeLayer.strokeStart = 0.0
+                let secondStrokeEndAnimation = CABasicAnimation(keyPath: "strokeEnd")
+                secondStrokeEndAnimation.fromValue = 0.5
+                secondStrokeEndAnimation.toValue = 1.0
+                secondStrokeEndAnimation.duration = 0.3
+                secondStrokeEndAnimation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionDefault)
+                secondRedViewShapeLayer.addAnimation(secondStrokeEndAnimation, forKey: "redLayerstrokeEndChange")
+                secondRedViewShapeLayer.strokeEnd = 1.0
+                
+        }
     }
     
     override func animationDidStop(anim: CAAnimation!, finished flag: Bool)
