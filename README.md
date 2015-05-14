@@ -2,7 +2,8 @@
 An iOS Progress Indicator that moves around a circle.
 
 MSProgressView will work with and without AutoLayout.  To use AutoLayout, simply write
-```progressView.setTranslatesAutoresizingMaskIntoConstraints(false)
+```
+progressView.setTranslatesAutoresizingMaskIntoConstraints(false)
 ```
 
 ##Instructions
