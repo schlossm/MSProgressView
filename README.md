@@ -49,7 +49,7 @@ MSProgressView *progressView = [[MSProgressView alloc] initWithFrame:CGRectMake(
 ```
 
 ##Options
-MSProgressView is completely customizable.  However, for quick setup, two(2) variables have been provided for you.
+MSProgressView is completely customizable.  For quick setup, two(2) variables have been provided for you.
 
 * `barColor`.  This value takes a `UIColor`.  Setting it will automatically animate the color change.  The default is white.
 * `barWidth`.  This value takes a `CGFloat`.  Setting it will automatically animate the width change.  The default is 5.0.
@@ -58,7 +58,7 @@ MSProgressView is completely customizable.  However, for quick setup, two(2) var
 
 * `startAnimating()`  This method will immediately show the view (if it has been hidden) and begin to make the MSProgressView revolve in a circle.  Use this for **indefinite** loading times.
 * `stopAnimating()`  This method will stop the rotation and immediately hide the MSProgressView from sight.
-* `setProgress(progress)`  This method begins showing the loading progress out of 100%.  If `startAnimating()` was called before this method, the rotation will come to a stop and the loading prgoress will update with an animation.  Use this for **definite** loading times.
+* `setProgress(progress)`  This method begins showing the loading progress out of 100%.  If `startAnimating()` was called before this method, the rotation will come to a stop and the loading progress will update with an animation.  Use this for **definite** loading times.
 *  `showComplete()` This method will hide the progress bar and display a green circle with a white checkmark with a fancy animation.  You will not be able to update the progress after this method is called.
 *  `showIncomplete()` This method will hide the progress bar and display a red circle with a white "x" with a fancy animation.  You will not be able to update the progress after this method is called.
 
