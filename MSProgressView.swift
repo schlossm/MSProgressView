@@ -8,7 +8,7 @@
 
 import UIKit
 
-private extension UIColor
+extension UIColor
 {
     var lighter : UIColor
         {
@@ -37,9 +37,15 @@ class MSProgressView: UIView
         {
         didSet
         {
-            UIView.animateWithDuration(0.3, animations: { () -> Void in
-                self.progressLayer.strokeColor = self.barColor.CGColor
-            })
+            let color = progressLayer.strokeColor
+            progressLayer.strokeColor = barColor.CGColor
+            let barColorAnimation = CABasicAnimation(keyPath: "lineWidth")
+            barColorAnimation.fromValue = NSValue(nonretainedObject: color)
+            barColorAnimation.toValue = NSValue(nonretainedObject: barColor.CGColor)
+            barColorAnimation.fillMode = kCAFillModeForwards
+            barColorAnimation.duration = 0.5
+            barColorAnimation.removedOnCompletion = false
+            progressLayer.addAnimation(barColorAnimation, forKey: "barColorAnimation")
         }
     }
     
@@ -51,9 +57,15 @@ class MSProgressView: UIView
         {
         didSet
         {
-            UIView.animateWithDuration(0.3, animations: { () -> Void in
-                self.progressLayer.lineWidth = self.barWidth
-            })
+            let lineWidth = progressLayer.lineWidth
+            progressLayer.lineWidth = barWidth
+            let barWidthAnimation = CABasicAnimation(keyPath: "lineWidth")
+            barWidthAnimation.fromValue = lineWidth
+            barWidthAnimation.toValue = barWidth
+            barWidthAnimation.fillMode = kCAFillModeForwards
+            barWidthAnimation.duration = 0.5
+            barWidthAnimation.removedOnCompletion = false
+            progressLayer.addAnimation(barWidthAnimation, forKey: "barWidthAnimation")
         }
     }
     
@@ -68,6 +80,7 @@ class MSProgressView: UIView
         }
     }
     
+    private var isComplete = false
     private var isRotating = false
     
     override func drawRect(rect: CGRect)
@@ -114,31 +127,30 @@ class MSProgressView: UIView
         progressLayer.bounds = CGRectMake(0, 0, bounds.size.width, bounds.size.height)
         progressLayer.anchorPoint = CGPointMake(0.5, 0.5)
         progressLayer.position = CGPoint(x: bounds.size.width/2.0, y: bounds.size.height/2.0)
-        /*
-        if progressBar != nil
-        {
-        progressBar = UIBezierPath(arcCenter: CGPointMake(progressLayer.bounds.size.width/2.0, progressLayer.bounds.height/2.0), radius: progressLayer.bounds.size.width/2.0, startAngle: 0.0, endAngle: CGFloat(2.0 * M_PI), clockwise: true)
-        progressLayer.path = progressBar.CGPath
-        }*/
     }
     
     func startAnimating(animated: Bool)
     {
+        guard isComplete == false else
+        {
+            return
+        }
+        
         if animated == false
         {
             alpha = 1.0
         }
         isRotating = true
+        let transform = progressLayer.transform
+        progressLayer.transform = CATransform3DRotate(progressLayer.transform, CGFloat((M_PI) - 0.001), 0.0, 0.0, 1.0)
         let rotationAnimation = CABasicAnimation(keyPath: "transform")
         rotationAnimation.delegate = self
-        CATransaction.setDisableActions(true)
-        rotationAnimation.fromValue = NSValue(CATransform3D: progressLayer.transform)
-        rotationAnimation.toValue = NSValue(CATransform3D: CATransform3DRotate(progressLayer.transform, CGFloat((M_PI) - 0.001), 0.0, 0.0, 1.0))
+        rotationAnimation.fromValue = NSValue(CATransform3D: transform)
+        rotationAnimation.toValue = NSValue(CATransform3D: CATransform3DRotate(transform, CGFloat((M_PI) - 0.001), 0.0, 0.0, 1.0))
         rotationAnimation.fillMode = kCAFillModeForwards
         rotationAnimation.duration = 0.5
         rotationAnimation.removedOnCompletion = false
         progressLayer.addAnimation(rotationAnimation, forKey: "rotationAnimation")
-        progressLayer.transform = CATransform3DRotate(progressLayer.transform, CGFloat((M_PI) - 0.001), 0.0, 0.0, 1.0)
     }
     
     func stopAnimating(animated: Bool)
@@ -158,7 +170,7 @@ class MSProgressView: UIView
         if progressLayer.animationForKey("rotationAnimation") != nil
         {
             progressLayer.removeAnimationForKey("rotationAnimation")
-            UIView.animateWithDuration(0.2, delay: 0.0, options: [.AllowUserInteraction], animations: { () -> Void in
+            UIView.animateWithDuration(0.2, delay: 0.0, options: .AllowUserInteraction, animations: { () -> Void in
                 self.progressLayer.transform = CATransform3DMakeRotation(CGFloat(M_PI * 3.0/2.0), 0.0, 0.0, 1.0)
                 }, completion: nil)
         }
@@ -174,10 +186,18 @@ class MSProgressView: UIView
     
     func showComplete()
     {
+        guard isComplete == false else
+        {
+            return
+        }
+        
+        isComplete = true
+        
+        isRotating = false
         if progressLayer.animationForKey("rotationAnimation") != nil
         {
             progressLayer.removeAnimationForKey("rotationAnimation")
-            UIView.animateWithDuration(0.2, delay: 0.0, options: [.AllowUserInteraction], animations: { () -> Void in
+            UIView.animateWithDuration(0.2, delay: 0.0, options: .AllowUserInteraction, animations: { () -> Void in
                 self.progressLayer.transform = CATransform3DMakeRotation(CGFloat(M_PI * 3.0/2.0), 0.0, 0.0, 1.0)
                 }, completion: nil)
         }
@@ -191,7 +211,7 @@ class MSProgressView: UIView
         greenView.layer.cornerRadius = frame.size.width/2.0
         
         let bezierPath = UIBezierPath()
-        bezierPath.lineCapStyle = CGLineCap.Round
+        bezierPath.lineCapStyle = .Round
         bezierPath.moveToPoint(CGPointMake(0.27083 * CGRectGetWidth(frame), 0.54167 * CGRectGetHeight(frame)))
         bezierPath.addLineToPoint(CGPointMake(0.41667 * CGRectGetWidth(frame), 0.68750 * CGRectGetHeight(frame)))
         bezierPath.addLineToPoint(CGPointMake(0.75000 * CGRectGetWidth(frame), 0.35417 * CGRectGetHeight(frame)))
@@ -206,16 +226,15 @@ class MSProgressView: UIView
         greenViewShapeLayer.anchorPoint = CGPointMake(0, 0)
         
         layoutIfNeeded()
-        greenView.transform = CGAffineTransformMakeRotation(CGFloat(M_PI_2))
         greenView.transform = CGAffineTransformMakeScale(0.0, 0.0)
         greenViewShapeLayer.strokeStart = 0.5
         greenViewShapeLayer.strokeEnd = 0.5
         
-        UIView.animateWithDuration(1.0, delay: 0.0, usingSpringWithDamping: 0.6, initialSpringVelocity: 1.0, options: [.AllowUserInteraction], animations: { () -> Void in
+        UIView.animateWithDuration(1.0, delay: 0.0, usingSpringWithDamping: 0.6, initialSpringVelocity: 1.0, options: .AllowUserInteraction, animations: { () -> Void in
             greenViewShapeLayer.strokeStart = 0.5
             greenViewShapeLayer.strokeEnd = 0.5
             self.progressLayer.opacity = 0.0
-            greenView.transform = CGAffineTransformMakeRotation(CGFloat(M_PI_2))
+            greenView.transform = CGAffineTransformIdentity
             }) { (finished) -> Void in
                 
                 greenViewShapeLayer.strokeStart = 0.5
@@ -241,10 +260,18 @@ class MSProgressView: UIView
     
     func showIncomplete()
     {
+        guard isComplete == false else
+        {
+            return
+        }
+        
+        isComplete = true
+        
+        isRotating = false
         if progressLayer.animationForKey("rotationAnimation") != nil
         {
             progressLayer.removeAnimationForKey("rotationAnimation")
-            UIView.animateWithDuration(0.2, delay: 0.0, options: [.AllowUserInteraction], animations: { () -> Void in
+            UIView.animateWithDuration(0.2, delay: 0.0, options: .AllowUserInteraction, animations: { () -> Void in
                 self.progressLayer.transform = CATransform3DMakeRotation(CGFloat(M_PI * 3.0/2.0), 0.0, 0.0, 1.0)
                 }, completion: nil)
         }
@@ -258,7 +285,7 @@ class MSProgressView: UIView
         redView.layer.cornerRadius = frame.size.width/2.0
         
         let firstBezierPath = UIBezierPath()
-        firstBezierPath.lineCapStyle = CGLineCap.Round
+        firstBezierPath.lineCapStyle = .Round
         firstBezierPath.moveToPoint(CGPointMake(0.27083 * CGRectGetWidth(frame), 0.27083 * CGRectGetHeight(frame)))
         firstBezierPath.addLineToPoint(CGPointMake(0.72917 * CGRectGetWidth(frame), 0.72917 * CGRectGetHeight(frame)))
         
@@ -272,7 +299,7 @@ class MSProgressView: UIView
         firstRedViewShapeLayer.anchorPoint = CGPointMake(0, 0)
         
         let secondBezierPath = UIBezierPath()
-        secondBezierPath.lineCapStyle = CGLineCap.Round
+        secondBezierPath.lineCapStyle = .Round
         secondBezierPath.moveToPoint(CGPointMake(0.27083 * CGRectGetWidth(frame), 0.72917 * CGRectGetHeight(frame)))
         secondBezierPath.addLineToPoint(CGPointMake(0.72917 * CGRectGetWidth(frame), 0.27083 * CGRectGetHeight(frame)))
         
@@ -293,7 +320,7 @@ class MSProgressView: UIView
         secondRedViewShapeLayer.strokeStart = 0.5
         secondRedViewShapeLayer.strokeEnd = 0.5
         
-        UIView.animateWithDuration(1.0, delay: 0.0, usingSpringWithDamping: 0.6, initialSpringVelocity: 1.0, options: [.AllowUserInteraction], animations: { () -> Void in
+        UIView.animateWithDuration(1.0, delay: 0.0, usingSpringWithDamping: 0.6, initialSpringVelocity: 1.0, options: .AllowUserInteraction, animations: { () -> Void in
             
             firstRedViewShapeLayer.strokeStart = 0.5
             firstRedViewShapeLayer.strokeEnd = 0.5
@@ -339,7 +366,18 @@ class MSProgressView: UIView
                 secondStrokeEndAnimation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionDefault)
                 secondRedViewShapeLayer.addAnimation(secondStrokeEndAnimation, forKey: "redLayerstrokeEndChange")
                 secondRedViewShapeLayer.strokeEnd = 1.0
-                
+        }
+    }
+    
+    func reset()
+    {
+        progressLayer.opacity = 1.0
+        progressBar = UIBezierPath(arcCenter: CGPointMake(progressLayer.bounds.size.width/2.0, progressLayer.bounds.height/2.0), radius: frame.size.width/2.0, startAngle: 0.0, endAngle: CGFloat(2.0 * M_PI), clockwise: true)
+        progressLayer.path = progressBar.CGPath
+        
+        for subview in subviews
+        {
+            subview.removeFromSuperview()
         }
     }
     

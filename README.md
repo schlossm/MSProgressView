@@ -1,9 +1,9 @@
 #MSProgressView
-An iOS Progress Indicator that moves around a circle.
+A simple iOS Progress Indicator.
 
 * Please Note: MSProgressView is written in Swift 2.  This requires Xcode 7+
 
-MSProgressView will work with and without AutoLayout.  To use AutoLayout, simply write
+MSProgressView will work with and without Auto-Layout.  To use Auto-Layout, simply write
 
 ```
 progressView.translatesAutoresizingMaskIntoConstraints = false
@@ -11,7 +11,7 @@ progressView.translatesAutoresizingMaskIntoConstraints = false
 
 ##Instructions
 
-1. To use MSProgressView, simply download `MSProgressView.swift` and drag it into Xcode.
+1. To use MSProgressView, download `MSProgressView.swift` and drag it into Xcode.
 2. That's it.  If you are writing your project in Objective-C, you will have to import `XXX-Swift.h` into your `.m` file, where `XXX` is your project's name.
 
 ###Swift Setup
@@ -20,7 +20,7 @@ progressView.translatesAutoresizingMaskIntoConstraints = false
 
 let progressView = MSProgressView()
 progressView.translatesAutoresizingMaskIntoConstraints = false
-progressView.startAnimating()
+progressView.startAnimating(false)
 view.addSubview(progressView)
 ...
 
@@ -28,7 +28,7 @@ view.addSubview(progressView)
 -- Non AutoLayout Version --
 
 let progressView = MSProgressView(frame: CGRect(x: ..., y: ..., width: ..., height: ...))
-progressView.startAnimating()
+progressView.startAnimating(false)
 view.addSubview(progressView)
 ...
 ```
@@ -39,7 +39,7 @@ view.addSubview(progressView)
 
 MSProgressView *progressView = [[MSProgressView alloc] init];
 [progressView setTranslatesAutoresizingMaskIntoConstraints:NO];
-[progressView startAnimating];
+[progressView startAnimating:false];
 [view addSubview:progressView];
 ...
 
@@ -47,18 +47,18 @@ MSProgressView *progressView = [[MSProgressView alloc] init];
 -- Non AutoLayout Version -- 
 
 MSProgressView *progressView = [[MSProgressView alloc] initWithFrame:CGRectMake(..., ..., ..., ...)];
-[progressView startAnimating];
+[progressView startAnimating:false];
 [view addSubview:progressView];
 ...
 ```
 
 ##Options
-MSProgressView is completely customizable.  For quick setup, two(2) variables have been provided for you.
+MSProgressView is completely customizable.  For quick setup, two variables have been provided for you.
 
 * `barColor`.  This value takes a `UIColor`.  Setting it will automatically animate the color change.  The default is white.
 * `barWidth`.  This value takes a `CGFloat`.  Setting it will automatically animate the width change.  The default is 5.0.
 
-These values are also marked as @IBInspectable.
+These values are also marked as @IBInspectable, and can be changed in Interface Builder.
 
 ##Methods
 
