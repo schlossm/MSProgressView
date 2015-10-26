@@ -1,20 +1,14 @@
 #MSProgressView
-A simple iOS Progress Indicator.
+A simple, circular iOS Progress Indicator with completion & error feedback.
 
-* Please Note: MSProgressView is written in Swift 2.  This requires Xcode 7+
+* **NOTE:** MSProgressView is written in Swift 2.  This requires Xcode 7+
 
-MSProgressView will work with and without Auto-Layout.  To use Auto-Layout, simply write
-
-```
-progressView.translatesAutoresizingMaskIntoConstraints = false
-```
-
-##Instructions
+##Setup
 
 1. To use MSProgressView, download `MSProgressView.swift` and drag it into Xcode.
 2. That's it.  If you are writing your project in Objective-C, you will have to import `XXX-Swift.h` into your `.m` file, where `XXX` is your project's name.
 
-###Swift Setup
+###Swift
 ```
 -- AutoLayout Version -- (Apple Recommended Setup)
 
@@ -33,7 +27,7 @@ view.addSubview(progressView)
 ...
 ```
 
-###Objective-C Setup
+###Objective-C
 ```
 -- AutoLayout Version -- (Apple Recommended Setup)
 
@@ -52,24 +46,27 @@ MSProgressView *progressView = [[MSProgressView alloc] initWithFrame:CGRectMake(
 ...
 ```
 
+**Note:** MSProgressView is marked @IBDesignable.  You can initialize in Interface Builder as well as code.
+
 ##Options
 MSProgressView is completely customizable.  For quick setup, two variables have been provided for you.
 
-* `barColor`.  This value takes a `UIColor`.  Setting it will automatically animate the color change.  The default is white.
-* `barWidth`.  This value takes a `CGFloat`.  Setting it will automatically animate the width change.  The default is 5.0.
+* `barColor` - This value takes a `UIColor`.  Setting it will automatically animate the color change.  The default is `UIColor.whiteColor()`.
+* `barWidth` - This value takes a `CGFloat`.  Setting it will automatically animate the width change.  The default is `5.0`.
 
 These values are also marked as @IBInspectable, and can be changed in Interface Builder.
 
 ##Methods
 
 * `startAnimating(animated: Bool)`  This method will begin to make the MSProgressView revolve in a circle.  Use this for **indefinite** loading times.  
- * If `animated` is set to true, the alpha is not changed.  If `animated` is set to false, the alpha is set to 1.0 **without** an animation
+ * `animated` - `true` if your code handles display of MSProgressView. Set to `false` if you want MSProgressView to instantly appear.
 * `stopAnimating(animated: Bool)`  This method will immediately stop the rotation.
- * If `animated` is set to true, the alpha is not changed.  If `animated` is set to false, the alpha is set to 0.0 **without** an animation
-* `setProgress(progress: CGFloat)`  This method begins showing the loading progress out of 100%.  If `startAnimating()` was called before this method, the rotation will come to a stop and the loading progress will update with an animation.  Use this for **definite** loading times.
+ * `animated` - `true` if your code handles display of MSProgressView. Set to `false` if you want MSProgressView to instantly appear.
+* `setProgress(progress: CGFloat)`  This method begins showing the loading progress out of 100%.  Use this for **definite** loading times.
 *  `showComplete()` This method will hide the progress bar and display a green circle with a white checkmark with a fancy animation.  You will not be able to update the progress after this method is called.
 *  `showIncomplete()` This method will hide the progress bar and display a red circle with a white "x" with a fancy animation.  You will not be able to update the progress after this method is called.
+*  `reset()` This method resets MSProgressView to its initial state.
 
 ##Values
 
-* `currentProgress`  This value returns the current progress the MSProgressView has loaded.  **This property is** ***readonly***
+* `currentProgress` ***readonly*** This value returns the current progress the MSProgressView has loaded.
