@@ -7,7 +7,7 @@
 //
 
 import UIKit
-/*
+
 extension UIColor
 {
     var lighter : UIColor
@@ -24,7 +24,7 @@ extension UIColor
             return UIColor(red: red + 0.1, green: green + 0.1, blue: blue + 0.1, alpha: alpha)
         }
     }
-}*/
+}
 
 @IBDesignable
 class MSProgressView: UIView
