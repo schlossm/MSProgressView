@@ -129,7 +129,7 @@ class MSProgressView: UIView
         progressLayer.position = CGPoint(x: bounds.size.width/2.0, y: bounds.size.height/2.0)
     }
     
-    func startAnimating(animated: Bool)
+    func startAnimating(animated: Bool = false)
     {
         guard isComplete == false else
         {
@@ -153,7 +153,7 @@ class MSProgressView: UIView
         progressLayer.addAnimation(rotationAnimation, forKey: "rotationAnimation")
     }
     
-    func stopAnimating(animated: Bool)
+    func stopAnimating(animated: Bool = false)
     {
         isRotating = false
         if animated == false
@@ -385,7 +385,7 @@ class MSProgressView: UIView
     {
         if isRotating
         {
-            startAnimating(true)
+            startAnimating()
         }
     }
 }
