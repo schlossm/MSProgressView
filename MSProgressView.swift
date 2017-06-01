@@ -93,6 +93,7 @@ enum MSProgressViewCompletion
     {
         super.init(frame: .zero)
         translatesAutoresizingMaskIntoConstraints = false
+        commonInit()
     }
     
     override init(frame: CGRect)
