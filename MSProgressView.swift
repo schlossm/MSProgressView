@@ -79,7 +79,7 @@ enum MSProgressViewCompletion
     static let completionAnimationTime : TimeInterval = 1.0
     
     ///A small buffer to be appended to the end of `completionAnimationTime` to allow for the viewing of the finialized state after all animations have completed
-    static let preferredHumanDelay : TimeInterval = 0.8
+    static let preferredHumanDelay : TimeInterval = 0.5
     
     //Internal Use Variables
     fileprivate var progressLayer : CAShapeLayer!
@@ -271,7 +271,7 @@ enum MSProgressViewCompletion
                 }, completion: nil)
         }
         
-        progressLayer.add(springAnimation("strokeEnd", fromValue: progress, toValue: newProgress), forKey: nil)
+        progressLayer.add(makeSpringAnimation(for: "strokeEnd", fromValue: progress, toValue: newProgress), forKey: nil)
         progress = newProgress
         progressLayer.strokeEnd = newProgress
     }
@@ -296,7 +296,7 @@ enum MSProgressViewCompletion
         isComplete = true
         isRotating = false
         
-        let greenView = completeView(UIColor.green.lighter)
+        let greenView = makeCompleteView(with: UIColor.green.lighter)
         
         let bezierPath = UIBezierPath()
         bezierPath.lineCapStyle = .round
@@ -304,7 +304,7 @@ enum MSProgressViewCompletion
         bezierPath.addLine(to: CGPoint(x: 0.41667 * frame.width, y: 0.68750 * frame.height))
         bezierPath.addLine(to: CGPoint(x: 0.75000 * frame.width, y: 0.35417 * frame.height))
         
-        let greenViewShapeLayer = shapeLayer(bezierPath)
+        let greenViewShapeLayer = makeShapeLayer(with: bezierPath)
         greenView.layer.addSublayer(greenViewShapeLayer)
         greenViewShapeLayer.anchorPoint = CGPoint(x: 0, y: 0)
         
@@ -315,8 +315,8 @@ enum MSProgressViewCompletion
             greenView.transform = CGAffineTransform.identity
         }) { [unowned self] _  in
             self.progressLayer.removeAnimation(forKey: "rotationAnimation")
-            greenViewShapeLayer.add(self.springAnimation("strokeStart", fromValue: 0.5, toValue: 0.0), forKey: nil)
-            greenViewShapeLayer.add(self.springAnimation("strokeEnd", fromValue: 0.5, toValue: 1.0), forKey: nil)
+            greenViewShapeLayer.add(self.makeSpringAnimation(for: "strokeStart", fromValue: 0.5, toValue: 0.0), forKey: nil)
+            greenViewShapeLayer.add(self.makeSpringAnimation(for: "strokeEnd", fromValue: 0.5, toValue: 1.0), forKey: nil)
             
             greenViewShapeLayer.strokeStart = 0.0
             greenViewShapeLayer.strokeEnd = 1.0
@@ -329,7 +329,7 @@ enum MSProgressViewCompletion
         isComplete = true
         isRotating = false
         
-        let redView = completeView(UIColor.red.lighter)
+        let redView = makeCompleteView(with: UIColor.red.lighter)
         
         let firstBezierPath = UIBezierPath()
         firstBezierPath.lineCapStyle = .round
@@ -341,11 +341,11 @@ enum MSProgressViewCompletion
         secondBezierPath.move(to: CGPoint(x: 0.27083 * frame.width, y: 0.72917 * frame.height))
         secondBezierPath.addLine(to: CGPoint(x: 0.72917 * frame.width, y: 0.27083 * frame.height))
         
-        let firstRedViewShapeLayer = shapeLayer(firstBezierPath)
+        let firstRedViewShapeLayer = makeShapeLayer(with: firstBezierPath)
         redView.layer.addSublayer(firstRedViewShapeLayer)
         firstRedViewShapeLayer.anchorPoint = CGPoint(x: 0, y: 0)
         
-        let secondRedViewShapeLayer = shapeLayer(secondBezierPath)
+        let secondRedViewShapeLayer = makeShapeLayer(with: secondBezierPath)
         redView.layer.addSublayer(secondRedViewShapeLayer)
         secondRedViewShapeLayer.anchorPoint = CGPoint(x: 0, y: 0)
         
@@ -357,10 +357,10 @@ enum MSProgressViewCompletion
         }) { [unowned self] _ in
             self.progressLayer.removeAnimation(forKey: "rotationAnimation")
             
-            firstRedViewShapeLayer.add(self.springAnimation("stokeStart", fromValue: 0.5, toValue: 0.0), forKey: nil)
-            firstRedViewShapeLayer.add(self.springAnimation("strokeEnd", fromValue: 0.5, toValue: 1.0), forKey: nil)
-            secondRedViewShapeLayer.add(self.springAnimation("strokeStart", fromValue: 0.5, toValue: 0.0), forKey: nil)
-            secondRedViewShapeLayer.add(self.springAnimation("strokeEnd", fromValue: 0.5, toValue: 1.0), forKey: nil)
+            firstRedViewShapeLayer.add(self.makeSpringAnimation(for: "stokeStart", fromValue: 0.5, toValue: 0.0), forKey: nil)
+            firstRedViewShapeLayer.add(self.makeSpringAnimation(for: "strokeEnd", fromValue: 0.5, toValue: 1.0), forKey: nil)
+            secondRedViewShapeLayer.add(self.makeSpringAnimation(for: "strokeStart", fromValue: 0.5, toValue: 0.0), forKey: nil)
+            secondRedViewShapeLayer.add(self.makeSpringAnimation(for: "strokeEnd", fromValue: 0.5, toValue: 1.0), forKey: nil)
             
             secondRedViewShapeLayer.strokeStart = 0.0
             firstRedViewShapeLayer.strokeEnd = 1.0
@@ -383,7 +383,7 @@ enum MSProgressViewCompletion
         progressLayer.add(rotationAnimation, forKey: "rotationAnimation")
     }
     
-    fileprivate func springAnimation(_ keyPath: String, fromValue: Any, toValue: Any) -> CASpringAnimation
+    fileprivate func makeSpringAnimation(for keyPath: String, fromValue: Any, toValue: Any) -> CASpringAnimation
     {
         let animation = CASpringAnimation(keyPath: keyPath)
         animation.fromValue = fromValue
@@ -394,7 +394,7 @@ enum MSProgressViewCompletion
         return animation
     }
     
-    fileprivate func shapeLayer(_ path: UIBezierPath) -> CAShapeLayer
+    fileprivate func makeShapeLayer(with path: UIBezierPath) -> CAShapeLayer
     {
         let shapeLayer = CAShapeLayer()
         shapeLayer.lineCap = kCALineCapRound
@@ -408,7 +408,7 @@ enum MSProgressViewCompletion
         return shapeLayer
     }
     
-    fileprivate func completeView(_ color: UIColor) -> UIView
+    fileprivate func makeCompleteView(with color: UIColor) -> UIView
     {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
