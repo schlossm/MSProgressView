@@ -266,8 +266,8 @@ enum MSProgressViewCompletion
         {
             isRotating = false
             progressLayer.removeAnimation(forKey: "rotationAnimation")
-            UIViewPropertyAnimator.runningPropertyAnimator(withDuration: 0.2, delay: 0.0, options: [.allowUserInteraction, .allowAnimatedContent], animations: { [unowned self] in
-                self.progressLayer.transform = CATransform3DMakeRotation(CGFloat.pi * 3.0/2.0, 0.0, 0.0, 1.0)
+            UIViewPropertyAnimator.runningPropertyAnimator(withDuration: 0.2, delay: 0.0, options: [.allowUserInteraction, .allowAnimatedContent], animations: { [weak self] in
+                self?.progressLayer.transform = CATransform3DMakeRotation(CGFloat.pi * 3.0/2.0, 0.0, 0.0, 1.0)
                 }, completion: nil)
         }
         
@@ -313,10 +313,11 @@ enum MSProgressViewCompletion
         
         UIView.animate(withDuration: MSProgressView.completionAnimationTime, delay: 0.0, usingSpringWithDamping: 0.6, initialSpringVelocity: 1.0, options: [.allowUserInteraction, .allowAnimatedContent], animations: {
             greenView.transform = CGAffineTransform.identity
-        }) { [unowned self] _  in
-            self.progressLayer.removeAnimation(forKey: "rotationAnimation")
-            greenViewShapeLayer.add(self.makeSpringAnimation(for: "strokeStart", fromValue: 0.5, toValue: 0.0), forKey: nil)
-            greenViewShapeLayer.add(self.makeSpringAnimation(for: "strokeEnd", fromValue: 0.5, toValue: 1.0), forKey: nil)
+        }) { [weak self] _  in
+            guard let weakSelf = self else { return }
+            weakSelf.progressLayer.removeAnimation(forKey: "rotationAnimation")
+            greenViewShapeLayer.add(weakSelf.makeSpringAnimation(for: "strokeStart", fromValue: 0.5, toValue: 0.0), forKey: nil)
+            greenViewShapeLayer.add(weakSelf.makeSpringAnimation(for: "strokeEnd", fromValue: 0.5, toValue: 1.0), forKey: nil)
             
             greenViewShapeLayer.strokeStart = 0.0
             greenViewShapeLayer.strokeEnd = 1.0
@@ -354,13 +355,14 @@ enum MSProgressViewCompletion
         
         UIView.animate(withDuration: MSProgressView.completionAnimationTime, delay: 0.0, usingSpringWithDamping: 0.6, initialSpringVelocity: 1.0, options: .allowUserInteraction, animations: {
             redView.transform = CGAffineTransform(rotationAngle: CGFloat.pi/2.0)
-        }) { [unowned self] _ in
-            self.progressLayer.removeAnimation(forKey: "rotationAnimation")
+        }) { [weak self] _ in
+            guard let weakSelf = self else { return }
+            weakSelf.progressLayer.removeAnimation(forKey: "rotationAnimation")
             
-            firstRedViewShapeLayer.add(self.makeSpringAnimation(for: "stokeStart", fromValue: 0.5, toValue: 0.0), forKey: nil)
-            firstRedViewShapeLayer.add(self.makeSpringAnimation(for: "strokeEnd", fromValue: 0.5, toValue: 1.0), forKey: nil)
-            secondRedViewShapeLayer.add(self.makeSpringAnimation(for: "strokeStart", fromValue: 0.5, toValue: 0.0), forKey: nil)
-            secondRedViewShapeLayer.add(self.makeSpringAnimation(for: "strokeEnd", fromValue: 0.5, toValue: 1.0), forKey: nil)
+            firstRedViewShapeLayer.add(weakSelf.makeSpringAnimation(for: "stokeStart", fromValue: 0.5, toValue: 0.0), forKey: nil)
+            firstRedViewShapeLayer.add(weakSelf.makeSpringAnimation(for: "strokeEnd", fromValue: 0.5, toValue: 1.0), forKey: nil)
+            secondRedViewShapeLayer.add(weakSelf.makeSpringAnimation(for: "strokeStart", fromValue: 0.5, toValue: 0.0), forKey: nil)
+            secondRedViewShapeLayer.add(weakSelf.makeSpringAnimation(for: "strokeEnd", fromValue: 0.5, toValue: 1.0), forKey: nil)
             
             secondRedViewShapeLayer.strokeStart = 0.0
             firstRedViewShapeLayer.strokeEnd = 1.0
