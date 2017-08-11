@@ -103,6 +103,7 @@ private let animationKey = "rotationAnimation"
     private func commonInit()
     {
         translatesAutoresizingMaskIntoConstraints = false
+        backgroundColor = .clear
         
         progressLayer?.removeFromSuperlayer()
         
@@ -429,6 +430,7 @@ private extension MSProgressView
         rotationAnimation.fillMode = kCAFillModeForwards
         rotationAnimation.duration = 0.5
         rotationAnimation.delegate = self
+        rotationAnimation.isRemovedOnCompletion = false
         progressLayer.add(rotationAnimation, forKey: animationKey)
     }
     
@@ -474,6 +476,7 @@ extension MSProgressView : CAAnimationDelegate
     public func animationDidStop(_ anim: CAAnimation, finished flag: Bool)
     {
         guard anim == progressLayer.animation(forKey: animationKey) else { return }
+        progressLayer.removeAnimation(forKey: animationKey)
         if isRotating
         {
             addAnimationForRotation()
