@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "10679FA21F3D3A5B009F18FB"
-               BuildableName = "MSProgressView tvOS.framework"
+               BuildableName = "MSProgressView.framework"
                BlueprintName = "MSProgressView tvOS"
                ReferencedContainer = "container:MSProgressView.xcodeproj">
             </BuildableReference>
@@ -46,7 +46,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "10679FA21F3D3A5B009F18FB"
-            BuildableName = "MSProgressView tvOS.framework"
+            BuildableName = "MSProgressView.framework"
             BlueprintName = "MSProgressView tvOS"
             ReferencedContainer = "container:MSProgressView.xcodeproj">
          </BuildableReference>
@@ -64,7 +64,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "10679FA21F3D3A5B009F18FB"
-            BuildableName = "MSProgressView tvOS.framework"
+            BuildableName = "MSProgressView.framework"
             BlueprintName = "MSProgressView tvOS"
             ReferencedContainer = "container:MSProgressView.xcodeproj">
          </BuildableReference>

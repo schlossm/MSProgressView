@@ -6,6 +6,8 @@
 //  Copyright (c) 2015 Michael Schloss. All rights reserved.
 //
 
+import UIKit
+
 private let animationKey = "rotationAnimation"
 
 @IBDesignable public class MSProgressView : UIView
