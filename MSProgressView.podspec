@@ -24,7 +24,7 @@ A spinning loading indicator with completion feedback.  Allows for determinate a
   s.homepage         = 'https://www.mascomputech.com/msprogressview/index.html'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.author           = { 'Michael Schloss' => 'mschloss11@gmail.com' }
-  s.source           = { :git => 'https://github.com/schlossm/MSProgressView.git', :tag => 'master' }
+  s.source           = { :git => 'https://github.com/schlossm/MSProgressView.git', :tag => 'MSProgressView-1.0' }
   # s.social_media_url = 'https://twitter.com/officialschloss'
 
   s.ios.deployment_target = '9.0'
