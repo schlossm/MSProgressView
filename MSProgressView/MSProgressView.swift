@@ -38,7 +38,7 @@ private let animationKey = "rotationAnimation"
         }
     }
     
-    public var progressObject : Progress?
+    @objc public var progressObject : Progress?
     {
         didSet
         {
