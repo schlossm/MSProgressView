@@ -60,7 +60,7 @@ private let animationKey = "rotationAnimation"
     public static let completionAnimationTime : TimeInterval = 1.0
     
     ///A small buffer to be appended to the end of `completionAnimationTime` to allow for the viewing of the finialized state after all animations have completed
-    public static let preferredHumanDelay : TimeInterval = 0.5
+    public static let preferredHumanDelay : TimeInterval = 0.2
     
     ///A convenience variable to get the full wait time after you call `finish(_:)`.  Returns `completionAnimationTime` + `preferredHumanDelay`
     public static var fullWaitTimeAfterFinish : TimeInterval
@@ -70,9 +70,9 @@ private let animationKey = "rotationAnimation"
     
     //Internal Use Variables
     fileprivate var progressLayer : CAShapeLayer!
-    fileprivate var progressBar : UIBezierPath!
-    fileprivate var progress = 0.0
-    fileprivate var isComplete = false
+    private var progressBar : UIBezierPath!
+    private var progress = 0.0
+    private var isComplete = false
     {
         didSet
         {
@@ -81,7 +81,7 @@ private let animationKey = "rotationAnimation"
         }
     }
     fileprivate var isRotating = false
-    fileprivate var hasSetProgress = false
+    private var hasSetProgress = false
     
     public init()
     {
