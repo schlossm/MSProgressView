@@ -86,6 +86,7 @@ private let animationKey = "rotationAnimation"
     public init()
     {
         super.init(frame: .zero)
+        translatesAutoresizingMaskIntoConstraints = false
         commonInit()
     }
     
@@ -104,7 +105,6 @@ private let animationKey = "rotationAnimation"
     //Private init stuff.  Basically sets background colors and builds the circular ring
     private func commonInit()
     {
-        translatesAutoresizingMaskIntoConstraints = false
         backgroundColor = .clear
         
         progressLayer?.removeFromSuperlayer()
