@@ -119,7 +119,7 @@ private let animationKey = "rotationAnimation"
     
     override public func draw(_ rect: CGRect)
     {
-        progressBar = UIBezierPath(arcCenter: CGPoint(x: progressLayer.bounds.size.width/2.0, y: progressLayer.bounds.height/2.0), radius: rect.size.width/2.0 - barWidth, startAngle: 0.0, endAngle: 2.0 * CGFloat.pi, clockwise: true)
+        progressBar = UIBezierPath(arcCenter: CGPoint(x: progressLayer.bounds.size.width/2.0, y: progressLayer.bounds.height/2.0), radius: rect.size.width/2.0 - barWidth/2.0, startAngle: 0.0, endAngle: 2.0 * CGFloat.pi, clockwise: true)
         progressLayer.path = progressBar.cgPath
         layer.addSublayer(progressLayer)
     }
