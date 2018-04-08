@@ -1,6 +1,8 @@
 # MSProgressView
 ### A simple, circular Progress Indicator with completion success/error feedback
 
+![Build Status](https://www.bitrise.io/app/689896f44cca4b39/status.svg?token=2gKpITGv4XFVtfhDXbfBag)
+
 **NOTE:** MSProgressView is written in Swift 4.  This requires Xcode 9+
 
 ## Setup
