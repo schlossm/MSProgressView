@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0830"
+   LastUpgradeVersion = "0930"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "10679FA21F3D3A5B009F18FB"
+               BlueprintIdentifier = "1056E62E1F201310006FC6AC"
                BuildableName = "MSProgressView.framework"
-               BlueprintName = "MSProgressView tvOS"
+               BlueprintName = "MSProgressView iOS"
                ReferencedContainer = "container:MSProgressView.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -45,9 +45,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "10679FA21F3D3A5B009F18FB"
+            BlueprintIdentifier = "1056E62E1F201310006FC6AC"
             BuildableName = "MSProgressView.framework"
-            BlueprintName = "MSProgressView tvOS"
+            BlueprintName = "MSProgressView iOS"
             ReferencedContainer = "container:MSProgressView.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -63,9 +63,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "10679FA21F3D3A5B009F18FB"
+            BlueprintIdentifier = "1056E62E1F201310006FC6AC"
             BuildableName = "MSProgressView.framework"
-            BlueprintName = "MSProgressView tvOS"
+            BlueprintName = "MSProgressView iOS"
             ReferencedContainer = "container:MSProgressView.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

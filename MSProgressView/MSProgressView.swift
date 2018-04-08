@@ -38,7 +38,7 @@ private let animationKey = "rotationAnimation"
         }
     }
     
-    public var progressObject : Progress?
+    @objc public var progressObject : Progress?
     {
         didSet
         {
@@ -60,7 +60,7 @@ private let animationKey = "rotationAnimation"
     public static let completionAnimationTime : TimeInterval = 1.0
     
     ///A small buffer to be appended to the end of `completionAnimationTime` to allow for the viewing of the finialized state after all animations have completed
-    public static let preferredHumanDelay : TimeInterval = 0.5
+    public static let preferredHumanDelay : TimeInterval = 0.2
     
     ///A convenience variable to get the full wait time after you call `finish(_:)`.  Returns `completionAnimationTime` + `preferredHumanDelay`
     public static var fullWaitTimeAfterFinish : TimeInterval
@@ -70,9 +70,9 @@ private let animationKey = "rotationAnimation"
     
     //Internal Use Variables
     fileprivate var progressLayer : CAShapeLayer!
-    fileprivate var progressBar : UIBezierPath!
-    fileprivate var progress = 0.0
-    fileprivate var isComplete = false
+    private var progressBar : UIBezierPath!
+    private var progress = 0.0
+    private var isComplete = false
     {
         didSet
         {
@@ -81,11 +81,12 @@ private let animationKey = "rotationAnimation"
         }
     }
     fileprivate var isRotating = false
-    fileprivate var hasSetProgress = false
+    private var hasSetProgress = false
     
     public init()
     {
         super.init(frame: .zero)
+        translatesAutoresizingMaskIntoConstraints = false
         commonInit()
     }
     
@@ -104,7 +105,6 @@ private let animationKey = "rotationAnimation"
     //Private init stuff.  Basically sets background colors and builds the circular ring
     private func commonInit()
     {
-        translatesAutoresizingMaskIntoConstraints = false
         backgroundColor = .clear
         
         progressLayer?.removeFromSuperlayer()
@@ -119,7 +119,7 @@ private let animationKey = "rotationAnimation"
     
     override public func draw(_ rect: CGRect)
     {
-        progressBar = UIBezierPath(arcCenter: CGPoint(x: progressLayer.bounds.size.width/2.0, y: progressLayer.bounds.height/2.0), radius: rect.size.width/2.0 - barWidth, startAngle: 0.0, endAngle: 2.0 * CGFloat.pi, clockwise: true)
+        progressBar = UIBezierPath(arcCenter: CGPoint(x: progressLayer.bounds.size.width/2.0, y: progressLayer.bounds.height/2.0), radius: rect.size.width/2.0 - barWidth/2.0, startAngle: 0.0, endAngle: 2.0 * CGFloat.pi, clockwise: true)
         progressLayer.path = progressBar.cgPath
         layer.addSublayer(progressLayer)
     }
