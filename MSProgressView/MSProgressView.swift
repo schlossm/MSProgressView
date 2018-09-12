@@ -278,7 +278,7 @@ private let animationKey = "rotationAnimation"
         }
         
         UIViewPropertyAnimator.runningPropertyAnimator(withDuration: 0.2, delay: 0.0, options: [.allowUserInteraction, .allowAnimatedContent], animations: { [weak self] in
-            self?.progressLayer.transform = CATransform3DMakeRotation(CGFloat.pi * 3.0/2.0, 0.0, 0.0, 1.0)
+            self?.progressLayer.transform = CATransform3DMakeRotation(.pi * 3.0/2.0, 0.0, 0.0, 1.0)
             }, completion: nil)
         
         progressLayer.add(makeSpringAnimation(for: "strokeEnd", fromValue: progress, toValue: newProgress), forKey: nil)
@@ -318,7 +318,7 @@ private extension MSProgressView
         }
         
         let animations = {
-            successView.transform = CGAffineTransform.identity
+            successView.transform = .identity
         }
         
         let completion : (Any) -> Void = { [weak self] _ in
