@@ -57,7 +57,7 @@ private let animationKey = "rotationAnimation"
     }
     
     //Internal Use Variables
-    private var progressLayer : CAShapeLayer!
+    fileprivate var progressLayer : CAShapeLayer!
     private var progressBar : UIBezierPath!
     private var progress = 0.0
     private var isComplete = false
@@ -68,7 +68,7 @@ private let animationKey = "rotationAnimation"
             hasSetProgress = false
         }
     }
-    private var isRotating = false
+    fileprivate var isRotating = false
     private var hasSetProgress = false
     
     public init()
