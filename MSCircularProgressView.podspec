@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'MSCircularProgressView'
-  s.version          = '1.1.0'
+  s.version          = '1.0.3'
   s.summary          = 'A spinning loading indicator with completion feedback'
 
   s.description      = <<-DESC
@@ -15,7 +15,7 @@ A spinning loading indicator with completion feedback.  Allows for determinate a
 
   s.ios.deployment_target = '10.0'
 
-  s.source_files = 'MSProgressView/MSProgressView.swift', 'MSProgressView/MSProgressViewCompletion.swift', 'MSProgressView/UIColor.swift'
+  s.source_files = 'MSProgressView/MSProgressView.swift', 'MSProgressView/MSProgressViewCompletion.swift', 'MSProgressView/UIColor.swift', 'MSProgressView/MSProgressView.h'
 
   s.frameworks = 'UIKit'
 end
