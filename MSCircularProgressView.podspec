@@ -14,6 +14,7 @@ A spinning loading indicator with completion feedback.  Allows for determinate a
   # s.social_media_url = 'https://twitter.com/officialschloss'
 
   s.ios.deployment_target = '10.0'
+  s.swift_version = '4.2'
 
   s.source_files = 'MSProgressView/MSProgressView.swift', 'MSProgressView/MSProgressViewCompletion.swift', 'MSProgressView/UIColor.swift'
 
