@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'MSCircularProgressView'
-  s.version          = '1.1.0'
+  s.version          = '1.1.1'
   s.summary          = 'A spinning loading indicator with completion feedback'
 
   s.description      = <<-DESC
