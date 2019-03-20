@@ -9,6 +9,7 @@
 import UIKit
 
 private let animationKey = "rotationAnimation"
+private let strokeEndAnimation = "strokeEndAnimation"
 
 @IBDesignable public class MSProgressView : UIView
 {
@@ -78,7 +79,7 @@ private let animationKey = "rotationAnimation"
         commonInit()
     }
     
-    override init(frame: CGRect)
+    override public init(frame: CGRect)
     {
         super.init(frame: frame)
         commonInit()
@@ -103,6 +104,7 @@ private let animationKey = "rotationAnimation"
         progressLayer.fillColor = UIColor.clear.cgColor
         progressLayer.lineWidth = barWidth
         progressLayer.strokeEnd = 0.9
+        progressLayer.transform = CATransform3DMakeRotation(-.pi/2.0, 0, 0, 1)
     }
     
     override public func draw(_ rect: CGRect)
@@ -134,20 +136,7 @@ private let animationKey = "rotationAnimation"
         isRotating = true
         
         if automaticallyShow { alpha = 1.0 }
-        
-        if progressLayer.animation(forKey: animationKey) == nil
-        {
-            addAnimationForRotation()
-        }
-        else
-        {
-            let pausedTime = progressLayer.timeOffset
-            progressLayer.speed = 1
-            progressLayer.timeOffset = 0
-            progressLayer.beginTime = 0
-            let timeSincePause = progressLayer.convertTime(CACurrentMediaTime(), from: nil) - pausedTime
-            progressLayer.beginTime = timeSincePause
-        }
+        addAnimationForRotation()
     }
     
     /**
@@ -166,9 +155,9 @@ private let animationKey = "rotationAnimation"
         
         if automaticallyHide { alpha = 0.0 }
         
-        let pausedTime = progressLayer.convertTime(CACurrentMediaTime(), from: nil)
-        progressLayer.speed = 0
-        progressLayer.timeOffset = pausedTime
+        progressLayer.removeAllAnimations()
+        guard let currentVisibleTransform = progressLayer.presentation()?.value(forKeyPath: "transform") as? CATransform3D else { return }
+        progressLayer.transform = currentVisibleTransform
     }
     
     /**
@@ -269,6 +258,7 @@ private let animationKey = "rotationAnimation"
     {
         guard !isComplete else { return }
         
+        let newProgress = max(0.0, min(newProgress, 1.0))
         hasSetProgress = true
         
         if isRotating
@@ -281,7 +271,12 @@ private let animationKey = "rotationAnimation"
             self?.progressLayer.transform = CATransform3DMakeRotation(.pi * 3.0/2.0, 0.0, 0.0, 1.0)
             }, completion: nil)
         
-        progressLayer.add(makeSpringAnimation(for: "strokeEnd", fromValue: progress, toValue: newProgress), forKey: nil)
+        if let currentVisibleStrokeEnd = progressLayer.presentation()?.value(forKeyPath: "strokeEnd") as? CGFloat {
+            progressLayer.removeAllAnimations()
+            progressLayer.strokeEnd = currentVisibleStrokeEnd
+            progress = Double(currentVisibleStrokeEnd)
+        }
+        progressLayer.add(makeSpringAnimation(for: "strokeEnd", fromValue: progress, toValue: newProgress), forKey: strokeEndAnimation)
         progress = newProgress
         progressLayer.strokeEnd = CGFloat(newProgress)
     }
