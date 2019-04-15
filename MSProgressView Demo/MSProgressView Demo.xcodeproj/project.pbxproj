@@ -63,6 +63,8 @@
 		1056E6521F2040EA006FC6AC /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		1056E6551F2040EA006FC6AC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		1056E6571F2040EA006FC6AC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		109122B62264137C00A93D8F /* MSCircularProgressView.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; name = MSCircularProgressView.podspec; path = ../MSCircularProgressView.podspec; sourceTree = "<group>"; };
+		109122B72264140100A93D8F /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -89,6 +91,8 @@
 		1056E63F1F2040EA006FC6AC = {
 			isa = PBXGroup;
 			children = (
+				109122B72264140100A93D8F /* README.md */,
+				109122B62264137C00A93D8F /* MSCircularProgressView.podspec */,
 				1056E64A1F2040EA006FC6AC /* MSProgressView Demo */,
 				1056E6491F2040EA006FC6AC /* Products */,
 			);
@@ -151,14 +155,14 @@
 					1056E6471F2040EA006FC6AC = {
 						CreatedOnToolsVersion = 8.3.3;
 						DevelopmentTeam = 7SSRC7UGJ6;
-						LastSwiftMigration = 0900;
+						LastSwiftMigration = 1020;
 						ProvisioningStyle = Automatic;
 					};
 				};
 			};
 			buildConfigurationList = 1056E6431F2040EA006FC6AC /* Build configuration list for PBXProject "MSProgressView Demo" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
@@ -371,8 +375,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.Michael-Schloss.MSProgressView-Demo";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
@@ -386,8 +389,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.Michael-Schloss.MSProgressView-Demo";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
 		};

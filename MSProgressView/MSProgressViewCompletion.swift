@@ -14,9 +14,4 @@ public enum MSProgressViewCompletion
 
     ///Displays a red circle with an "✕"
     case failure
-
-    public static func fromBool(bool: Bool) -> MSProgressViewCompletion
-    {
-        return bool ? success : failure
-    }
 }

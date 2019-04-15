@@ -9,33 +9,81 @@
 import UIKit
 
 private let animationKey = "rotationAnimation"
-private let strokeEndAnimation = "strokeEndAnimation"
 
-@IBDesignable public class MSProgressView : UIView
+/**
+ A circular progress view for indeterminate or determinate loading states
+ */
+@IBDesignable @objc open class MSProgressView : UIView
 {
+    @objc private class ProgressObserver : NSObject
+    {
+        @objc dynamic let progress: Progress
+        let progressView: MSProgressView
+        
+        private var observers = [NSKeyValueObservation]()
+        
+        func reset()
+        {
+            observers = []
+        }
+        
+        init(progress: Progress, progressView: MSProgressView)
+        {
+            self.progress = progress
+            self.progressView = progressView
+            super.init()
+            
+            observers.append(observe(\ProgressObserver.progress.fractionCompleted, options: [.new, .old, .initial, .prior]) { object, change in
+                guard !object.progress.isIndeterminate else { return }
+                if Thread.current == Thread.main
+                {
+                    progressView.setProgress(object.progress.fractionCompleted)
+                }
+                else
+                {
+                    DispatchQueue.main.sync { progressView.setProgress(object.progress.fractionCompleted) }
+                }
+            })
+        }
+    }
+    
     /**
-     The color of the progress bar.  Use `setBar(color:, _:)` if you want to animate this change
+     The color of the progress bar.  Use `setBar(color:_:)` if you want to animate this change
      
      The default color is white.
      */
-    @IBInspectable public var barColor : UIColor = .white
-        {
+    @IBInspectable open var barColor : UIColor = .white
+    {
         didSet { progressLayer.strokeColor = barColor.cgColor }
     }
     
     /**
-     The width of the progress bar.  Use `setBar(width:, _:)` if you want to animate this change
+     The width of the progress bar.  Use `setBar(width:_:)` if you want to animate this change
      
      The default width is 5.0
      */
-    @IBInspectable public var barWidth : CGFloat = 5.0
-        {
+    @IBInspectable open var barWidth : CGFloat = 5.0
+    {
         didSet { progressLayer.lineWidth = barWidth }
     }
     
-    @objc public var progressObject : Progress?
-        {
-        didSet { progressObject?.addObserver(self, forKeyPath: #keyPath(progressObject.fractionCompleted), options: .new, context: nil) }
+    @objc dynamic private var observer: ProgressObserver?
+    
+    /**
+     Attaches a `Progress` object to `MSProgressView`.
+     
+     As you update the `totalUnitCount` and/or `completedUnitCount`, `MSProgressView` will automatically update its display
+     
+     - Important: If `isIndeterminate` evaluates to true, `MSProgressView` will not update in response to changes in properties
+     */
+    @objc dynamic open var progressObject : Progress?
+    {
+        didSet {
+            observer?.reset()
+            observer = nil
+            guard let progress = progressObject else { return }
+            observer = ProgressObserver(progress: progress, progressView: self)
+        }
     }
     
     /**
@@ -61,6 +109,7 @@ private let strokeEndAnimation = "strokeEndAnimation"
     private var progressLayer : CAShapeLayer!
     private var progressBar : UIBezierPath!
     private var progress = 0.0
+    private var singleDispatch: Any? = nil
     private var isComplete = false
     {
         didSet
@@ -91,6 +140,12 @@ private let strokeEndAnimation = "strokeEndAnimation"
         commonInit()
     }
     
+    open override func removeFromSuperview()
+    {
+        stop()
+        super.removeFromSuperview()
+    }
+    
     //Private init stuff.  Basically sets background colors and builds the circular ring
     private func commonInit()
     {
@@ -104,17 +159,18 @@ private let strokeEndAnimation = "strokeEndAnimation"
         progressLayer.fillColor = UIColor.clear.cgColor
         progressLayer.lineWidth = barWidth
         progressLayer.strokeEnd = 0.9
-        progressLayer.transform = CATransform3DMakeRotation(-.pi/2.0, 0, 0, 1)
     }
     
-    override public func draw(_ rect: CGRect)
+    override open func draw(_ rect: CGRect)
     {
         progressBar = UIBezierPath(arcCenter: CGPoint(x: progressLayer.bounds.size.width/2.0, y: progressLayer.bounds.height/2.0), radius: rect.size.width/2.0 - barWidth/2.0, startAngle: 0.0, endAngle: 2.0 * CGFloat.pi, clockwise: true)
         progressLayer.path = progressBar.cgPath
-        layer.addSublayer(progressLayer)
+        if layer.sublayers == nil || layer.sublayers?.contains(progressLayer) == false {
+            layer.addSublayer(progressLayer)
+        }
     }
     
-    override public func layoutSubviews()
+    override open func layoutSubviews()
     {
         super.layoutSubviews()
         progressLayer.bounds = CGRect(x: 0, y: 0, width: bounds.size.width, height: bounds.size.height)
@@ -122,42 +178,48 @@ private let strokeEndAnimation = "strokeEndAnimation"
     }
     
     /**
-     Rotate the circular notched bar around in an infinite circle.  Use this method for indefinite load times.  Specify a boolean to tell the view whether or not you intend on controlling the presentation yourself
+     Rotate the circular notched bar around in an infinite circle.  Use this method for indefinite load times
      
-     If you specify `true`, the presentation is not animated
-     
-     If `setProgress(_:)` was called, this method does nothing
-     
-     - Parameter automaticallyShow: Whether to automatically display the progress bar or not.  Set to `false` or leave blank if you intend on using your own code to present this view
+     If any of the following methods were called, this method does nothing:
+     * `setProgress(_:animated:)`
+     * `finish(_:animated:)`
      */
-    public func start(automaticallyShow: Bool = false)
+    open func start()
     {
         guard !isComplete && !isRotating && !hasSetProgress else { return }
         isRotating = true
         
-        if automaticallyShow { alpha = 1.0 }
-        addAnimationForRotation()
+        if progressLayer.animation(forKey: animationKey) == nil
+        {
+            addAnimationForRotation()
+        }
+        else
+        {
+            let pausedTime = progressLayer.timeOffset
+            progressLayer.speed = 1
+            progressLayer.timeOffset = 0
+            progressLayer.beginTime = 0
+            let timeSincePause = progressLayer.convertTime(CACurrentMediaTime(), from: nil) - pausedTime
+            progressLayer.beginTime = timeSincePause
+        }
     }
     
     /**
-     Stop rotating the circular notched bar.  Use this method to pause the rotation.  Specify a boolean to tell the view whether or not you intend on controlling the dismissal yourself
+     Stop rotating the circular notched bar.  Use this method to pause the rotation
      
-     If you specify `true`, the dismissal is not animated.  The dismissal does not remove the view from its superview
-     
-     If `start(_:)` was not called, or if `setProgress(_:)` was called, this method does nothing
-     
-     - Parameter automaticallyHide: Whether to automatically hide the progress bar or not.  Set to `false` or leave blank if you intend on using your own code to dismiss this view
+     If any of the following methods were called, this method does nothing:
+     * `start()`
+     * `setProgress(_:animated:)`
+     * `finish(_:animated:)`
      */
-    public func stop(automaticallyHide: Bool = false)
+    open func stop()
     {
         guard !isComplete && isRotating && !hasSetProgress else { return }
         isRotating = false
         
-        if automaticallyHide { alpha = 0.0 }
-        
-        progressLayer.removeAllAnimations()
-        guard let currentVisibleTransform = progressLayer.presentation()?.value(forKeyPath: "transform") as? CATransform3D else { return }
-        progressLayer.transform = currentVisibleTransform
+        let pausedTime = progressLayer.convertTime(CACurrentMediaTime(), from: nil)
+        progressLayer.speed = 0
+        progressLayer.timeOffset = pausedTime
     }
     
     /**
@@ -166,30 +228,34 @@ private let strokeEndAnimation = "strokeEndAnimation"
      The change in state is animated.  You can use the class variable `completionAnimationTime` to obtain the time interval for the animation to delay execution of any other animations that might overlap
      
      - Parameter completion: The state of completion in which the progress view should should reflect.  Refer to `MSProgressViewCompletion`'s documentation for more information
+     - Parameter animated: Whether or not the display should be animated
      */
-    public func finish(_ completion: MSProgressViewCompletion)
+    open func finish(_ completion: MSProgressViewCompletion, animated: Bool = true)
     {
         guard !isComplete else { return }
         isComplete = true
         
         switch completion
         {
-        case .success: success()
+        case .success: success(animated: animated)
             
-        case .failure: failure()
+        case .failure: failure(animated: animated)
         }
     }
     
     /**
      Immediately terminates the progress view's state and resets the view back to its original state.
      
-     The change is not animated
+     After calling `reset`, you can call any other methods (for example when restarting a download).  The reset is not animated
+     
+     - Note: MSProgressView does **not** lose its attachment to the given `progressObject`, if one was supplied
      */
-    public func reset()
+    open func reset()
     {
         isComplete = false
         isRotating = false
         hasSetProgress = false
+        singleDispatch = nil
         progress = 0.0
         
         for subview in subviews { subview.removeFromSuperview() }
@@ -207,7 +273,7 @@ private let strokeEndAnimation = "strokeEndAnimation"
      - Parameter color: The new color
      - Parameter flag: Whether or not the color change should be animated
      */
-    public func setBar(color: UIColor, animated flag: Bool = false)
+    open func setBar(color: UIColor, animated flag: Bool = false)
     {
         let color = progressLayer.strokeColor
         progressLayer.strokeColor = barColor.cgColor
@@ -229,7 +295,7 @@ private let strokeEndAnimation = "strokeEndAnimation"
      - Parameter width: The new width
      - Parameter flag: Whether or not the width change should be animated
      */
-    public func setBar(width: CGFloat, animated flag: Bool = false)
+    open func setBar(width: CGFloat, animated flag: Bool = false)
     {
         let lineWidth = progressLayer.lineWidth
         progressLayer.lineWidth = barWidth
@@ -250,15 +316,16 @@ private let strokeEndAnimation = "strokeEndAnimation"
      
      If the progress view is showing an indefinite load, the circular bar will be removed and replaced
      
-     If `finish(_:)` was called, this method does nothing
+     If `finish(_:animated:)` was called, this method does nothing
      
-     - Parameter newProgress: The total progress the view should reflect.  The change in progress is animated
+     - Parameter newProgress: The total progress the view should reflect
+     - Parameter animated: Whether or not the progress change should be animated.  Defaults to `true`
      */
-    public func setProgress(_ newProgress: Double)
+    open func setProgress(_ newProgress: Double, animated: Bool = true)
     {
         guard !isComplete else { return }
+        let newProgress = max(0, min(1.0, newProgress))
         
-        let newProgress = max(0.0, min(newProgress, 1.0))
         hasSetProgress = true
         
         if isRotating
@@ -267,25 +334,31 @@ private let strokeEndAnimation = "strokeEndAnimation"
             progressLayer.removeAnimation(forKey: animationKey)
         }
         
-        UIViewPropertyAnimator.runningPropertyAnimator(withDuration: 0.2, delay: 0.0, options: [.allowUserInteraction, .allowAnimatedContent], animations: { [weak self] in
-            self?.progressLayer.transform = CATransform3DMakeRotation(.pi * 3.0/2.0, 0.0, 0.0, 1.0)
-            }, completion: nil)
-        
-        if let currentVisibleStrokeEnd = progressLayer.presentation()?.value(forKeyPath: "strokeEnd") as? CGFloat {
-            progressLayer.removeAllAnimations()
-            progressLayer.strokeEnd = currentVisibleStrokeEnd
-            progress = Double(currentVisibleStrokeEnd)
+        if let value = progressLayer.presentation()?.value(forKey: "strokeEnd") as? CGFloat
+        {
+            progressLayer.removeAnimation(forKey: "increase")
+            progressLayer.strokeEnd = value
         }
-        progressLayer.add(makeSpringAnimation(for: "strokeEnd", fromValue: progress, toValue: newProgress), forKey: strokeEndAnimation)
-        progress = newProgress
-        progressLayer.strokeEnd = CGFloat(newProgress)
-    }
-    
-    public override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?)
-    {
-        guard object as? Progress == progressObject else { return }
         
-        setProgress(progressObject?.fractionCompleted ?? 0.0)
+        if singleDispatch == nil
+        {
+            singleDispatch = true
+            UIViewPropertyAnimator.runningPropertyAnimator(withDuration: 0.2, delay: 0.0, options: [.allowUserInteraction, .allowAnimatedContent], animations: { [weak self] in
+                self?.progressLayer.transform = CATransform3DMakeRotation(.pi * 3.0/2.0, 0.0, 0.0, 1.0)
+                }, completion: nil)
+        }
+        
+        if animated
+        {
+            UIViewPropertyAnimator(duration: 0.3, dampingRatio: 1.0) {
+                self.progressLayer.strokeEnd = CGFloat(newProgress)
+                }.startAnimation()
+        }
+        else
+        {
+            progressLayer.strokeEnd = CGFloat(newProgress)
+        }
+        progress = newProgress
     }
 }
 
@@ -293,9 +366,9 @@ private let strokeEndAnimation = "strokeEndAnimation"
 
 private extension MSProgressView
 {
-    func success()
+    func success(animated: Bool)
     {
-        let successView = makeCompleteView(withColor: UIColor.green.lighter)
+        let successView = makeCompleteView(withColor: UIColor(red: 76/255.0, green: 217/255.0, blue: 100/255.0, alpha: 1.0))
         
         let successBezierPath = UIBezierPath()
         successBezierPath.lineCapStyle = .round
@@ -319,21 +392,33 @@ private extension MSProgressView
         let completion : (Any) -> Void = { [weak self] _ in
             guard let weakSelf = self else { return }
             weakSelf.progressLayer.removeAnimation(forKey: animationKey)
-            successShapeLayer.add(weakSelf.makeSpringAnimation(for: "strokeStart", fromValue: 0.5, toValue: 0.0), forKey: nil)
-            successShapeLayer.add(weakSelf.makeSpringAnimation(for: "strokeEnd", fromValue: 0.5, toValue: 1.0), forKey: nil)
+            if animated
+            {
+                successShapeLayer.add(weakSelf.makeSpringAnimation(for: "strokeStart", fromValue: 0.5, toValue: 0.0), forKey: nil)
+                successShapeLayer.add(weakSelf.makeSpringAnimation(for: "strokeEnd", fromValue: 0.5, toValue: 1.0), forKey: nil)
+            }
             
             successShapeLayer.strokeStart = 0.0
             successShapeLayer.strokeEnd = 1.0
         }
         
-        let animator = UIViewPropertyAnimator(duration: MSProgressView.completionAnimationTime, dampingRatio: 0.6, animations: animations)
-        animator.addCompletion(completion)
-        animator.startAnimation()
+        bringSubviewToFront(successView)
+        if animated
+        {
+            let animator = UIViewPropertyAnimator(duration: MSProgressView.completionAnimationTime, dampingRatio: 0.6, animations: animations)
+            animator.addCompletion(completion)
+            animator.startAnimation()
+        }
+        else
+        {
+            animations()
+            completion(self)
+        }
     }
     
-    func failure()
+    func failure(animated: Bool)
     {
-        let failureView = makeCompleteView(withColor: UIColor.red.lighter)
+        let failureView = makeCompleteView(withColor: UIColor(red: 255/255.0, green: 59/255.0, blue: 48/255.0, alpha: 1.0))
         
         let firstBezierPath = UIBezierPath()
         firstBezierPath.lineCapStyle = .round
@@ -365,11 +450,13 @@ private extension MSProgressView
         let completion : (Any) -> Void = { [weak self] _ in
             guard let weakSelf = self else { return }
             weakSelf.progressLayer.removeAnimation(forKey: animationKey)
-            
-            firstFailureViewShapeLayer.add(weakSelf.makeSpringAnimation(for: "stokeStart", fromValue: 0.5, toValue: 0.0), forKey: nil)
-            firstFailureViewShapeLayer.add(weakSelf.makeSpringAnimation(for: "strokeEnd", fromValue: 0.5, toValue: 1.0), forKey: nil)
-            secondFailureViewShapeLayer.add(weakSelf.makeSpringAnimation(for: "strokeStart", fromValue: 0.5, toValue: 0.0), forKey: nil)
-            secondFailureViewShapeLayer.add(weakSelf.makeSpringAnimation(for: "strokeEnd", fromValue: 0.5, toValue: 1.0), forKey: nil)
+            if animated
+            {
+                firstFailureViewShapeLayer.add(weakSelf.makeSpringAnimation(for: "stokeStart", fromValue: 0.5, toValue: 0.0), forKey: nil)
+                firstFailureViewShapeLayer.add(weakSelf.makeSpringAnimation(for: "strokeEnd", fromValue: 0.5, toValue: 1.0), forKey: nil)
+                secondFailureViewShapeLayer.add(weakSelf.makeSpringAnimation(for: "strokeStart", fromValue: 0.5, toValue: 0.0), forKey: nil)
+                secondFailureViewShapeLayer.add(weakSelf.makeSpringAnimation(for: "strokeEnd", fromValue: 0.5, toValue: 1.0), forKey: nil)
+            }
             
             secondFailureViewShapeLayer.strokeStart = 0.0
             firstFailureViewShapeLayer.strokeEnd = 1.0
@@ -377,20 +464,28 @@ private extension MSProgressView
             secondFailureViewShapeLayer.strokeEnd = 1.0
         }
         
-        let animator = UIViewPropertyAnimator(duration: MSProgressView.completionAnimationTime, dampingRatio: 0.6, animations: animations)
-        animator.addCompletion(completion)
-        animator.startAnimation()
+        if animated
+        {
+            let animator = UIViewPropertyAnimator(duration: MSProgressView.completionAnimationTime, dampingRatio: 0.6, animations: animations)
+            animator.addCompletion(completion)
+            animator.startAnimation()
+        }
+        else
+        {
+            animations()
+            completion(self)
+        }
     }
     
     func addAnimationForRotation()
     {
         let transform = progressLayer.transform
-        progressLayer.transform = CATransform3DRotate(progressLayer.transform, CGFloat.pi - 0.001, 0.0, 0.0, 1.0)
+        progressLayer.transform = CATransform3DRotate(progressLayer.transform, .pi/2.0, 0.0, 0.0, 1.0)
         let rotationAnimation = CABasicAnimation(keyPath: "transform")
         rotationAnimation.fromValue = NSValue(caTransform3D: transform)
-        rotationAnimation.toValue = NSValue(caTransform3D: CATransform3DRotate(transform, CGFloat.pi - 0.001, 0.0, 0.0, 1.0))
+        rotationAnimation.toValue = NSValue(caTransform3D: CATransform3DRotate(transform, .pi/2.0, 0.0, 0.0, 1.0))
         rotationAnimation.fillMode = .forwards
-        rotationAnimation.duration = 0.5
+        rotationAnimation.duration = 0.25
         rotationAnimation.delegate = self
         rotationAnimation.isRemovedOnCompletion = false
         progressLayer.add(rotationAnimation, forKey: animationKey)
@@ -425,6 +520,7 @@ private extension MSProgressView
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
         view.backgroundColor = color
+        view.layer.zPosition = 2
         addSubview(view)
         NSLayoutConstraint.activate(NSLayoutConstraint.constraints(withVisualFormat: "|[view]|", options: NSLayoutConstraint.FormatOptions(rawValue: 0), metrics: nil, views: ["view":view]) + NSLayoutConstraint.constraints(withVisualFormat: "V:|[view]|", options: NSLayoutConstraint.FormatOptions(rawValue: 0), metrics: nil, views: ["view":view]))
         view.layer.cornerRadius = frame.size.width/2.0
@@ -435,7 +531,7 @@ private extension MSProgressView
 
 extension MSProgressView : CAAnimationDelegate
 {
-    public func animationDidStop(_ anim: CAAnimation, finished flag: Bool)
+    open func animationDidStop(_ anim: CAAnimation, finished flag: Bool)
     {
         guard anim == progressLayer.animation(forKey: animationKey) else { return }
         progressLayer.removeAnimation(forKey: animationKey)

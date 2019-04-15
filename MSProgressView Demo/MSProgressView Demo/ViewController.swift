@@ -12,10 +12,16 @@ import MSProgressView
 class ViewController: UIViewController
 {
     @IBOutlet var progressView : MSProgressView!
+    private var progress = Progress()
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        progressView.progressObject = progress
+    }
     
     @IBAction func startProgressView()
     {
-        progressView.start(automaticallyShow: true)
+        progressView.start()
     }
     
     @IBAction func stopProgressView()
@@ -30,7 +36,8 @@ class ViewController: UIViewController
     
     @IBAction func setProgress(_ stepper: UIStepper)
     {
-        progressView.setProgress(stepper.value/10.0)
+        progress.totalUnitCount = 10
+        progress.completedUnitCount = Int64(stepper.value) % 11
     }
     
     @IBAction func successProgressView()

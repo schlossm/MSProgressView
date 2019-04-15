@@ -8,18 +8,15 @@
 
 /* Begin PBXBuildFile section */
 		103FF8A01F219ED800F9D490 /* MSProgressViewCompletion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 103FF89F1F219ED800F9D490 /* MSProgressViewCompletion.swift */; };
-		103FF8A21F219EF700F9D490 /* UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 103FF8A11F219EF700F9D490 /* UIColor.swift */; };
 		1056E6341F201310006FC6AC /* MSProgressView.h in Headers */ = {isa = PBXBuildFile; fileRef = 1056E6321F201310006FC6AC /* MSProgressView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1056E63B1F20131F006FC6AC /* MSProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1056E63A1F20131F006FC6AC /* MSProgressView.swift */; };
 		10679FAB1F3D3A6F009F18FB /* MSProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1056E63A1F20131F006FC6AC /* MSProgressView.swift */; };
 		10679FAC1F3D3A6F009F18FB /* MSProgressViewCompletion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 103FF89F1F219ED800F9D490 /* MSProgressViewCompletion.swift */; };
 		10679FB91F3D3C97009F18FB /* MSProgressView.h in Headers */ = {isa = PBXBuildFile; fileRef = 1056E6321F201310006FC6AC /* MSProgressView.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		10679FBE1F3D3CBF009F18FB /* UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 103FF8A11F219EF700F9D490 /* UIColor.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		103FF89F1F219ED800F9D490 /* MSProgressViewCompletion.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MSProgressViewCompletion.swift; sourceTree = "<group>"; };
-		103FF8A11F219EF700F9D490 /* UIColor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIColor.swift; sourceTree = "<group>"; };
 		1056E62F1F201310006FC6AC /* MSProgressView.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MSProgressView.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1056E6321F201310006FC6AC /* MSProgressView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MSProgressView.h; sourceTree = "<group>"; };
 		1056E6331F201310006FC6AC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -69,7 +66,6 @@
 				1056E6321F201310006FC6AC /* MSProgressView.h */,
 				1056E63A1F20131F006FC6AC /* MSProgressView.swift */,
 				103FF89F1F219ED800F9D490 /* MSProgressViewCompletion.swift */,
-				103FF8A11F219EF700F9D490 /* UIColor.swift */,
 			);
 			name = Common;
 			path = MSProgressView;
@@ -147,12 +143,12 @@
 		1056E6261F201310006FC6AC /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0930;
+				LastUpgradeCheck = 1020;
 				ORGANIZATIONNAME = "Michael Schloss";
 				TargetAttributes = {
 					1056E62E1F201310006FC6AC = {
 						CreatedOnToolsVersion = 8.3.3;
-						LastSwiftMigration = 1000;
+						LastSwiftMigration = 1020;
 						ProvisioningStyle = Automatic;
 					};
 					10679FA21F3D3A5B009F18FB = {
@@ -164,10 +160,11 @@
 			};
 			buildConfigurationList = 1056E6291F201310006FC6AC /* Build configuration list for PBXProject "MSProgressView" */;
 			compatibilityVersion = "Xcode 8.0";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				Base,
 			);
 			mainGroup = 1056E6251F201310006FC6AC;
 			productRefGroup = 1056E6301F201310006FC6AC /* Products */;
@@ -203,7 +200,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				1056E63B1F20131F006FC6AC /* MSProgressView.swift in Sources */,
-				103FF8A21F219EF700F9D490 /* UIColor.swift in Sources */,
 				103FF8A01F219ED800F9D490 /* MSProgressViewCompletion.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -213,7 +209,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				10679FAB1F3D3A6F009F18FB /* MSProgressView.swift in Sources */,
-				10679FBE1F3D3CBF009F18FB /* UIColor.swift in Sources */,
 				10679FAC1F3D3A6F009F18FB /* MSProgressViewCompletion.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -225,6 +220,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -287,6 +283,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -358,7 +355,7 @@
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
@@ -381,7 +378,7 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
 		};
