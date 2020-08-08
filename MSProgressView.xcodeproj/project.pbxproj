@@ -7,14 +7,14 @@
 	objects = {
 
 /* Begin PBXFileReference section */
-		106DFBBA24DF3DB0002A70DF /* MSProgressView */ = {isa = PBXFileReference; lastKnownFileType = folder; path = MSProgressView; sourceTree = "<group>"; };
+		106DFBBA24DF3DB0002A70DF /*  */ = {isa = PBXFileReference; lastKnownFileType = folder; name = ""; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
 		1056E6251F201310006FC6AC = {
 			isa = PBXGroup;
 			children = (
-				106DFBBA24DF3DB0002A70DF /* MSProgressView */,
+				106DFBBA24DF3DB0002A70DF /*  */,
 			);
 			sourceTree = "<group>";
 		};
